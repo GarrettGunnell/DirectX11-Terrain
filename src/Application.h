@@ -22,7 +22,7 @@ public:
 
 private:
 	Input* input;
-	D3D* Direct3D;
+	D3D* direct3D;
 	ShaderManager* shaderManager;
 	Timer* timer;
 	Fps* fps;
