@@ -1,25 +1,13 @@
 #include "Zone.h"
 
 Zone::Zone() {
-	userInterface = nullptr;
 	camera = nullptr;
 	position = nullptr;
 	terrain = nullptr;
-	displayUI = false;
 }
 
 bool Zone::Initialize(D3D* direct3D, HWND hwnd, int screenWidth, int screenHeight, float screenDepth) {
 	bool result;
-
-	userInterface = new UserInterface();
-	if (!userInterface)
-		return false;
-
-	result = userInterface->Initialize(direct3D, screenHeight, screenWidth);
-	if (!result) {
-		MessageBox(hwnd, L"Could not initialize the user interface", L"Error", MB_OK);
-		return false;
-	}
 
 	camera = new Camera();
 	if (!camera)
@@ -27,7 +15,6 @@ bool Zone::Initialize(D3D* direct3D, HWND hwnd, int screenWidth, int screenHeigh
 
 	camera->SetPosition(0.0f, 0.0f, -10.0f);
 	camera->Render();
-	camera->RenderBaseViewMatrix();
 
 	position = new Position();
 	if (!position)
@@ -45,8 +32,6 @@ bool Zone::Initialize(D3D* direct3D, HWND hwnd, int screenWidth, int screenHeigh
 		MessageBox(hwnd, L"Could not initialize the terrain", L"Error", MB_OK);
 		return false;
 	}
-
-	displayUI = true;
 
 	return true;
 }
@@ -67,15 +52,9 @@ void Zone::Shutdown() {
 		delete camera;
 		camera = nullptr;
 	}
-
-	if (userInterface) {
-		userInterface->Shutdown();
-		delete userInterface;
-		userInterface = nullptr;
-	}
 }
 
-bool Zone::Frame(D3D* direct3D, Input* input, ShaderManager* shaderManager, float frameTime, int fps) {
+bool Zone::Frame(D3D* direct3D, Input* input, ShaderManager* shaderManager, float frameTime) {
 	bool result;
 	float posX, posY, posZ, rotX, rotY, rotZ;
 
@@ -83,10 +62,6 @@ bool Zone::Frame(D3D* direct3D, Input* input, ShaderManager* shaderManager, floa
 
 	position->GetPosition(posX, posY, posZ);
 	position->GetRotation(rotX, rotY, rotZ);
-
-	result = userInterface->Frame(direct3D->GetDeviceContext(), fps, posX, posY, posZ, rotX, rotY, rotZ);
-	if (!result)
-		return false;
 
 	result = Render(direct3D, shaderManager);
 	if (!result)
@@ -101,28 +76,28 @@ void Zone::HandleMovementInput(Input* input, float frameTime) {
 
 	position->SetFrameTime(frameTime);
 
-	keyDown = input->IsLeftPressed();
+	keyDown = input->IsKeyDown(0x41); //A
 	position->TurnLeft(keyDown);
 
-	keyDown = input->IsRightPressed();
+	keyDown = input->IsKeyDown(0x44); //D
 	position->TurnRight(keyDown);
 
-	keyDown = input->IsUpPressed();
+	keyDown = input->IsKeyDown(0x57); //W
 	position->MoveForward(keyDown);
 
-	keyDown = input->IsDownPressed();
+	keyDown = input->IsKeyDown(0x53); //S
 	position->MoveBackward(keyDown);
 
-	keyDown = input->IsAPressed();
+	keyDown = input->IsKeyDown(VK_SPACE);
 	position->MoveUpward(keyDown);
 
-	keyDown = input->IsZPressed();
+	keyDown = input->IsKeyDown(VK_CONTROL);
 	position->MoveDownward(keyDown);
 
-	keyDown = input->IsPgUpPressed();
+	keyDown = input->IsKeyDown(0x52); //R
 	position->LookUpward(keyDown);
 
-	keyDown = input->IsPgDownPressed();
+	keyDown = input->IsKeyDown(0x46); //F
 	position->LookDownward(keyDown);
 
 	position->GetPosition(posX, posY, posZ);
@@ -130,14 +105,10 @@ void Zone::HandleMovementInput(Input* input, float frameTime) {
 
 	camera->SetPosition(posX, posY, posZ);
 	camera->SetRotation(rotX, rotY, rotZ);
-
-	if (input->IsF1Toggled()) {
-		displayUI = !displayUI;
-	}
 }
 
 bool Zone::Render(D3D* direct3D, ShaderManager* shaderManager) {
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, baseViewMatrix, orthoMatrix;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
 	bool result;
 
 	camera->Render();
@@ -145,7 +116,6 @@ bool Zone::Render(D3D* direct3D, ShaderManager* shaderManager) {
 	direct3D->GetWorldMatrix(worldMatrix);
 	camera->GetViewMatrix(viewMatrix);
 	direct3D->GetProjectionMatrix(projectionMatrix);
-	camera->GetBaseViewMatrix(baseViewMatrix);
 	direct3D->GetOrthoMatrix(orthoMatrix);
 
 	direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -154,12 +124,6 @@ bool Zone::Render(D3D* direct3D, ShaderManager* shaderManager) {
 	result = shaderManager->RenderColorShader(direct3D->GetDeviceContext(), terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	if (!result)
 		return false;
-
-	if (displayUI) {
-		result = userInterface->Render(direct3D, shaderManager, worldMatrix, baseViewMatrix, orthoMatrix);
-		if (!result)
-			return false;
-	}
 
 	direct3D->EndScene();
 

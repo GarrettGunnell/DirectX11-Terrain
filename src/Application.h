@@ -4,7 +4,6 @@
 #include "d3d.h"
 #include "ShaderManager.h""
 #include "Timer.h"
-#include "Fps.h"
 #include "Zone.h"
 
 const bool FULL_SCREEN = true;
@@ -25,6 +24,5 @@ private:
 	D3D* direct3D;
 	ShaderManager* shaderManager;
 	Timer* timer;
-	Fps* fps;
 	Zone* zone;
 };

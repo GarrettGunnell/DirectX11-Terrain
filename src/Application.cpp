@@ -16,12 +16,6 @@ bool Application::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, in
 	if (!input)
 		return false;
 
-	result = input->Initialize(hinstance, hwnd, screenWidth, screenHeight);
-	if (!result) {
-		MessageBox(hwnd, L"Could not initialize the input", L"Error", MB_OK);
-		return false;
-	}
-
 	direct3D = new D3D();
 	if (!direct3D)
 		return false;
@@ -52,12 +46,6 @@ bool Application::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, in
 		return false;
 	}
 
-	fps = new Fps();
-	if (!fps)
-		return false;
-
-	fps->Initialize();
-
 	zone = new Zone();
 	if (!zone)
 		return false;
@@ -78,11 +66,6 @@ void Application::Shutdown() {
 		zone = nullptr;
 	}
 
-	if (fps) {
-		delete fps;
-		fps = nullptr;
-	}
-
 	if (timer) {
 		delete timer;
 		timer = nullptr;
@@ -101,7 +84,6 @@ void Application::Shutdown() {
 	}
 
 	if (input) {
-		input->Shutdown();
 		delete input;
 		input = nullptr;
 	}
@@ -110,17 +92,16 @@ void Application::Shutdown() {
 bool Application::Frame() {
 	bool result;
 
-	fps->Frame();
 	timer->Frame();
 
 	result = input->Frame();
 	if (!result)
 		return false;
 
-	if (input->IsEscapedPressed())
+	if (input->IsKeyDown(VK_ESCAPE))
 		return false;
 
-	result = zone->Frame(direct3D, input, shaderManager, timer->GetTime(), fps->GetFps());
+	result = zone->Frame(direct3D, input, shaderManager, timer->GetTime());
 	if (!result)
 		return false;
 

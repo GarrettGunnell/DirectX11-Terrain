@@ -87,11 +87,6 @@ void System::Run() {
 bool System::Frame() {
 	bool result;
 
-
-	// Check if the user pressed escape and wants to exit the application.
-	if(input->IsKeyDown(VK_ESCAPE))
-		return false;
-
 	// Do the frame processing for the graphics object.
 	result = graphics->Frame();
 	if(!result)

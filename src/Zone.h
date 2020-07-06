@@ -4,7 +4,6 @@
 #include "Input.h"
 #include "ShaderManager.h"
 #include "Timer.h"
-#include "UserInterface.h"
 #include "Camera.h"
 #include "Position.h"
 #include "Terrain.h"
@@ -15,15 +14,13 @@ public:
 
 	bool Initialize(D3D*, HWND, int, int, float);
 	void Shutdown();
-	bool Frame(D3D*, Input*, ShaderManager*, float, int);
+	bool Frame(D3D*, Input*, ShaderManager*, float);
 
 private:
 	void HandleMovementInput(Input*, float);
 	bool Render(D3D*, ShaderManager*);
 
-	UserInterface* userInterface;
 	Camera* camera;
 	Position* position;
 	Terrain* terrain;
-	bool displayUI;
 };
