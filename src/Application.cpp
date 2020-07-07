@@ -4,7 +4,6 @@ Application::Application() {
 	input = nullptr;
 	direct3D = nullptr;
 	timer = nullptr;
-	fps = nullptr;
 	shaderManager = nullptr;
 	zone = nullptr;
 }
@@ -73,7 +72,7 @@ void Application::Shutdown() {
 
 	if (shaderManager) {
 		shaderManager->Shutdown();
-		delete shaderMananger;
+		delete shaderManager;
 		shaderManager = nullptr;
 	}
 
@@ -93,10 +92,6 @@ bool Application::Frame() {
 	bool result;
 
 	timer->Frame();
-
-	result = input->Frame();
-	if (!result)
-		return false;
 
 	if (input->IsKeyDown(VK_ESCAPE))
 		return false;

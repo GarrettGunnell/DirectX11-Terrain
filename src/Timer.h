@@ -3,6 +3,7 @@
 #include <windows.h>
 
 class Timer {
+public:
 	Timer();
 
 	bool Initialize();
