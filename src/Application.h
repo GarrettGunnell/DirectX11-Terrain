@@ -6,7 +6,7 @@
 #include "Timer.h"
 #include "Zone.h"
 
-const bool FULL_SCREEN = true;
+const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
@@ -15,7 +15,7 @@ class Application {
 public:
 	Application();
 
-	bool Initialize(HINSTANCE, HWND, int, int);
+	bool Initialize(HWND, int, int);
 	void Shutdown();
 	bool Frame();
 

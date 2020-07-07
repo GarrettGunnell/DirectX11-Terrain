@@ -5,7 +5,7 @@
 #include <windows.h>
 
 #include "Input.h"
-#include "Graphics.h"
+#include "Application.h"
 
 class System {
 public:
@@ -27,7 +27,7 @@ private:
 	HWND hwnd;
 
 	Input* input;
-	Graphics* graphics;
+	Application* application;
 };
 
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

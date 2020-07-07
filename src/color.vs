@@ -7,12 +7,12 @@ cbuffer MatrixBuffer {
 struct vInput {
 	float4 position : POSITION;
 	float4 color : COLOR;
-}
+};
 
 struct pInput {
 	float4 position : SV_POSITION;
 	float4 color : COLOR;
-}
+};
 
 pInput vsMain(vInput IN) {
 	pInput OUT;

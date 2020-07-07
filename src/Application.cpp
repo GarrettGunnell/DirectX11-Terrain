@@ -8,7 +8,7 @@ Application::Application() {
 	zone = nullptr;
 }
 
-bool Application::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight) {
+bool Application::Initialize(HWND hwnd, int screenWidth, int screenHeight) {
 	bool result;
 
 	input = new Input();

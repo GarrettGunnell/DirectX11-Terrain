@@ -3,7 +3,7 @@
 
 System::System() {
 	input = nullptr;
-	graphics = nullptr;
+	application = nullptr;
 }
 
 
@@ -28,12 +28,12 @@ bool System::Initialize() {
 	input->Initialize();
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
-	graphics = new Graphics();
-	if (!graphics)
+	application = new Application();
+	if (!application)
 		return false;
 
 	// Initialize the graphics object.
-	result = graphics->Initialize(screenWidth, screenHeight, hwnd);
+	result = application->Initialize(hwnd, screenWidth, screenHeight);
 	if (!result)
 		return false;
 	
@@ -42,10 +42,10 @@ bool System::Initialize() {
 
 
 void System::Shutdown() {
-	if (graphics) {
-		graphics->Shutdown();
-		delete graphics;
-		graphics = nullptr;
+	if (application) {
+		application->Shutdown();
+		delete application;
+		application = nullptr;
 	}
 
 	if (input) {
@@ -88,7 +88,7 @@ bool System::Frame() {
 	bool result;
 
 	// Do the frame processing for the graphics object.
-	result = graphics->Frame();
+	result = application->Frame();
 	if(!result)
 		return false;
 
