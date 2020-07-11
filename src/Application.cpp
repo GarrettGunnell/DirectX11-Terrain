@@ -8,12 +8,18 @@ Application::Application() {
 	zone = nullptr;
 }
 
-bool Application::Initialize(HWND hwnd, int screenWidth, int screenHeight) {
+bool Application::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight) {
 	bool result;
 
 	input = new Input();
 	if (!input)
 		return false;
+
+	result = input->Initialize(hinstance, hwnd);
+	if (!result) {
+		MessageBox(hwnd, L"Could not initialize Input", L"Error", MB_OK);
+		return false;
+	}
 
 	direct3D = new D3D();
 	if (!direct3D)
@@ -83,6 +89,7 @@ void Application::Shutdown() {
 	}
 
 	if (input) {
+		input->Shutdown();
 		delete input;
 		input = nullptr;
 	}
@@ -93,7 +100,11 @@ bool Application::Frame() {
 
 	timer->Frame();
 
-	if (input->IsKeyDown(VK_ESCAPE))
+	result = input->Frame();
+	if (!result)
+		return false;
+
+	if (input->IsKeyPressed(DIK_ESCAPE))
 		return false;
 
 	result = zone->Frame(direct3D, input, shaderManager, timer->GetTime());

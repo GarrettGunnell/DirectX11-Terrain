@@ -19,21 +19,13 @@ bool System::Initialize() {
 	// Initialize the windows api.
 	InitializeWindows(screenWidth, screenHeight);
 
-	// Create the input object.  This object will be used to handle reading the keyboard input from the user.
-	input = new Input();
-	if (!input)
-		return false;
-
-	// Initialize the input object.
-	input->Initialize();
-
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	application = new Application();
 	if (!application)
 		return false;
 
 	// Initialize the graphics object.
-	result = application->Initialize(hwnd, screenWidth, screenHeight);
+	result = application->Initialize(hinstance, hwnd, screenWidth, screenHeight);
 	if (!result)
 		return false;
 	
@@ -99,10 +91,8 @@ bool System::Frame() {
 LRESULT CALLBACK System::MessageHandler(HWND _hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
 	switch (umsg) {
 	case WM_KEYDOWN:
-		input->KeyDown((unsigned int)wparam);
 		return 0;
 	case WM_KEYUP:
-		input->KeyUp((unsigned int)wparam);
 		return 0;
 	default:
 		return DefWindowProc(_hwnd, umsg, wparam, lparam);

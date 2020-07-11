@@ -1,25 +1,83 @@
 #include "Input.h"
 
+Input::Input() {
+	directInput = nullptr;
+	keyboard = nullptr;
+}
 
-void Input::Initialize() {
-	int i;
-	
-	for(i = 0; i < 256; i++) {
-		keys[i] = false;
+
+bool Input::Initialize(HINSTANCE hinstance, HWND hwnd) {
+	HRESULT result;
+
+	result = DirectInput8Create(hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, NULL);
+	if (FAILED(result))
+		return false;
+
+	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
+	if (FAILED(result))
+		return false;
+
+	result = keyboard->SetDataFormat(&c_dfDIKeyboard);
+	if (FAILED(result))
+		return false;
+
+	result = keyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	if (FAILED(result))
+		return false;
+
+	result = keyboard->Acquire();
+	if (FAILED(result))
+		return false;
+
+	return true;
+}
+
+void Input::Shutdown() {
+	if (keyboard) {
+		keyboard->Unacquire();
+		keyboard->Release();
+		keyboard = nullptr;
+	}
+
+	if (directInput) {
+		directInput->Release();
+		directInput = nullptr;
 	}
 }
 
+bool Input::Frame() {
+	bool result;
 
-void Input::KeyDown(unsigned int input) {
-	keys[input] = true;
+	result = ReadKeyboard();
+	if (!result)
+		return false;
+
+	ProcessInput();
+
+	return true;
 }
 
+bool Input::ReadKeyboard() {
+	HRESULT result;
 
-void Input::KeyUp(unsigned int input) {
-	keys[input] = false;
+	result = keyboard->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState);
+	if (FAILED(result)) {
+		if ((result == DIERR_INPUTLOST) || (result == DIERR_NOTACQUIRED))
+			keyboard->Acquire();
+		else
+			return false;
+	}
+
+	return true;
 }
 
+void Input::ProcessInput() {
 
-bool Input::IsKeyDown(unsigned int key) {
-	return keys[key];
+}
+
+bool Input::IsKeyPressed(unsigned char key) {
+	if (keyboardState[key] & 0x80)
+		return true;
+
+	return false;
 }

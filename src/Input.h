@@ -1,14 +1,25 @@
 #pragma once
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
+
+#include <dinput.h>
 
 class Input {
 public:
-	void Initialize();
+	Input();
 
-	void KeyDown(unsigned int);
-	void KeyUp(unsigned int);
-
-	bool IsKeyDown(unsigned int);
+	bool Initialize(HINSTANCE, HWND);
+	void Shutdown();
+	bool Frame();
+	
+	bool IsKeyPressed(unsigned char);
 
 private:
-	bool keys[256];
+	bool ReadKeyboard();
+	void ProcessInput();
+
+	IDirectInput8* directInput;
+	IDirectInputDevice8* keyboard;
+
+	unsigned char keyboardState[256];
 };

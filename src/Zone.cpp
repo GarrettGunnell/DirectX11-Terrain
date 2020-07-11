@@ -76,28 +76,28 @@ void Zone::HandleMovementInput(Input* input, float frameTime) {
 
 	position->SetFrameTime(frameTime);
 
-	keyDown = input->IsKeyDown(0x41); //A
+	keyDown = input->IsKeyPressed(DIK_A);
 	position->TurnLeft(keyDown);
 
-	keyDown = input->IsKeyDown(0x44); //D
+	keyDown = input->IsKeyPressed(DIK_D);
 	position->TurnRight(keyDown);
 
-	keyDown = input->IsKeyDown(0x57); //W
+	keyDown = input->IsKeyPressed(DIK_W);
 	position->MoveForward(keyDown);
 
-	keyDown = input->IsKeyDown(0x53); //S
+	keyDown = input->IsKeyPressed(DIK_S);
 	position->MoveBackward(keyDown);
 
-	keyDown = input->IsKeyDown(VK_SPACE);
+	keyDown = input->IsKeyPressed(DIK_SPACE);
 	position->MoveUpward(keyDown);
 
-	keyDown = input->IsKeyDown(VK_CONTROL);
+	keyDown = input->IsKeyPressed(DIK_LCONTROL);
 	position->MoveDownward(keyDown);
 
-	keyDown = input->IsKeyDown(0x52); //R
+	keyDown = input->IsKeyPressed(DIK_R);
 	position->LookUpward(keyDown);
 
-	keyDown = input->IsKeyDown(0x46); //F
+	keyDown = input->IsKeyPressed(DIK_F);
 	position->LookDownward(keyDown);
 
 	position->GetPosition(posX, posY, posZ);

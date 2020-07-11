@@ -15,7 +15,7 @@ class Application {
 public:
 	Application();
 
-	bool Initialize(HWND, int, int);
+	bool Initialize(HINSTANCE, HWND, int, int);
 	void Shutdown();
 	bool Frame();
 
