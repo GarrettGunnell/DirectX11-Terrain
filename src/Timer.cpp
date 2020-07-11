@@ -1,29 +1,33 @@
 #include "Timer.h"
+#include <stdio.h>
 
 Timer::Timer() {
 	frequency = frameTime = 0;
+	startTime = beginTime = endTime = 0;
 }
 
 bool Timer::Initialize() {
-	LARGE_INTEGER freq;
+	INT64 freq;
 
-	if (QueryPerformanceFrequency(&freq) == false)
+	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
+	if (freq == 0)
 		return false;
+	fprintf(stdout, "%I64d\n", freq);
 
-	frequency = (double)freq.QuadPart;
+	frequency = (double)freq;
 
-	QueryPerformanceCounter(&startTime);
+	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
 
 	return true;
 }
 
 void Timer::Frame() {
-	LARGE_INTEGER currentTime, elapsedTicks;
+	INT64 currentTime, elapsedTicks;
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
-
-	elapsedTicks = currentTime = startTime;
-	frameTime = (double)elapsedTicks.QuadPart / frequency;
+	elapsedTicks = currentTime - startTime;
+	frameTime = (double)elapsedTicks / frequency;
+	fprintf(stdout, "%f\n", frameTime);
 	startTime = currentTime;
 }
 
@@ -45,7 +49,7 @@ int Timer::GetTiming() {
 	INT64 frequency;
 	float milliseconds;
 
-	elapsedTicks = (double)(endTime.QuadPart - beginTime.QuadPart);
+	elapsedTicks = (float)(endTime - beginTime);
 
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 

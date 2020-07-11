@@ -18,5 +18,5 @@ public:
 private:
 	double frequency;
 	double frameTime;
-	LARGE_INTEGER startTime, beginTime, endTime;
+	INT64 startTime, beginTime, endTime;
 };
