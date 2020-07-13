@@ -18,6 +18,8 @@ public:
 	void MoveBackward(bool);
 	void MoveUpward(bool);
 	void MoveDownward(bool);
+	void StrafeLeft(bool);
+	void StrafeRight(bool);
 	void TurnLeft(bool);
 	void TurnRight(bool);
 	void LookUpward(bool);
@@ -31,6 +33,7 @@ private:
 
 	float forwardSpeed, backwardSpeed;
 	float upwardSpeed, downwardSpeed;
+	float leftSpeed, rightSpeed;
 	float leftTurnSpeed, rightTurnSpeed;
 	float lookUpSpeed, lookDownSpeed;
 };

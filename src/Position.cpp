@@ -137,6 +137,54 @@ void Position::MoveDownward(bool keydown) {
 	positionY -= downwardSpeed;
 }
 
+void Position::StrafeLeft(bool keydown) {
+	float radians;
+	if (keydown) {
+		leftSpeed += frameTime * 1.5f;
+
+		if (leftSpeed > (frameTime * 15.0f)) {
+			leftSpeed = frameTime * 15.0f;
+		}
+	}
+	else {
+		leftSpeed -= frameTime * 0.5f;
+
+		if (leftSpeed < 0.0f) {
+			leftSpeed = 0.0f;
+		}
+	}
+
+
+	radians = rotationY * 0.0174532925f;
+
+	positionX -= cosf(radians) * leftSpeed;
+	positionZ += sinf(radians) * leftSpeed;
+}
+
+void Position::StrafeRight(bool keydown) {
+	float radians;
+	
+	if (keydown) {
+		rightSpeed += frameTime * 1.5f;
+
+		if (rightSpeed > (frameTime * 15.0f)) {
+			rightSpeed = frameTime * 15.0f;
+		}
+	}
+	else {
+		rightSpeed -= frameTime * 0.5f;
+
+		if (rightSpeed < 0.0f) {
+			rightSpeed = 0.0f;
+		}
+	}
+	
+	radians = rotationY * 0.0174532925f;
+
+	positionX += cosf(radians) * rightSpeed;
+	positionZ -= sinf(radians) * rightSpeed;
+}
+
 void Position::TurnLeft(bool keydown) {
 	if (keydown) {
 		leftTurnSpeed += frameTime * 5.0f;

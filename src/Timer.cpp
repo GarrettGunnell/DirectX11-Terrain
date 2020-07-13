@@ -12,7 +12,6 @@ bool Timer::Initialize() {
 	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
 	if (freq == 0)
 		return false;
-	fprintf(stdout, "%I64d\n", freq);
 
 	frequency = (double)freq;
 
@@ -27,7 +26,7 @@ void Timer::Frame() {
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
 	elapsedTicks = currentTime - startTime;
 	frameTime = (double)elapsedTicks / frequency;
-	fprintf(stdout, "%f\n", frameTime);
+
 	startTime = currentTime;
 }
 

@@ -23,6 +23,10 @@ int Terrain::GetIndexCount() {
 	return indexCount;
 }
 
+double map(double input, double input_start, double input_end, double output_start, double output_end) {
+	return (input - input_start) * (output_end - output_start) / (input_end - input_start) + output_start;
+}
+
 bool Terrain::InitializeBuffers(ID3D11Device* device) {
 	Vertex* vertices;
 	unsigned long* indices;
@@ -54,7 +58,12 @@ bool Terrain::InitializeBuffers(ID3D11Device* device) {
 		for (i = 0; i < (terrainWidth - 1); ++i) {
 			posX = i;
 			posZ = j + 1;
-
+			
+			float mappedRed = (float)map(posX + (double)posZ, 0, 510, 0.0, 0.9);
+			float mappedBlue = (float)map(posZ, 0, 255, 0.0, 0.8);
+			float mappedGreen = (float)map(255 - (double)posX, 255, 0, 1, 0.1);
+			color = XMFLOAT4(mappedRed, mappedBlue, mappedGreen, 1.0f);
+			
 			vertices[index].position = XMFLOAT3(posX, 0.0f, posZ);
 			vertices[index].color = color;
 			indices[index] = index;

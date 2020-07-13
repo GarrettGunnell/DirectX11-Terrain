@@ -76,6 +76,12 @@ void Zone::HandleMovementInput(Input* input, float frameTime) {
 
 	position->SetFrameTime(frameTime);
 
+	keyDown = input->IsKeyPressed(DIK_Q);
+	position->StrafeLeft(keyDown);
+
+	keyDown = input->IsKeyPressed(DIK_E);
+	position->StrafeRight(keyDown);
+
 	keyDown = input->IsKeyPressed(DIK_A);
 	position->TurnLeft(keyDown);
 
