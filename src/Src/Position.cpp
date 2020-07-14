@@ -19,6 +19,7 @@ Position::Position() {
 	rightTurnSpeed = 0.0f;
 	lookUpSpeed = 0.0f;
 	lookDownSpeed = 0.0f;
+	leftSpeed = rightSpeed = 0.0f;
 }
 
 void Position::SetPosition(float x, float y, float z) {

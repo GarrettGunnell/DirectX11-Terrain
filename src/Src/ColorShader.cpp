@@ -10,10 +10,13 @@ ColorShader::ColorShader() {
 bool ColorShader::Initialize(ID3D11Device* device, HWND hwnd) {
 	bool result;
 
-	result = InitializeShader(device, hwnd, L"color.vs", L"color.ps");
-	if (!result) {
+	result = InitializeShader(device, hwnd, 
+		L"C:/Users/Fatal/Documents/Visual Studio 2019/Projects/DX11_Terrain/src/Shaders/color.vs", 
+		L"C:/Users/Fatal/Documents/Visual Studio 2019/Projects/DX11_Terrain/src/Shaders/color.ps"
+	);
+
+	if (!result)
 		return false;
-	}
 
 	return true;
 }
@@ -26,9 +29,8 @@ bool ColorShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMM
 	bool result;
 
 	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix);
-	if (!result) {
+	if (!result)
 		return false;
-	}
 
 	RenderShader(deviceContext, indexCount);
 
