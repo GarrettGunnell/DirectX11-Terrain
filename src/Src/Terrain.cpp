@@ -60,8 +60,8 @@ bool Terrain::InitializeBuffers(ID3D11Device* device) {
 			posZ = j + 1;
 			
 			float mappedRed = (float)map(posX + (double)posZ, 0, 510, 0.0, 0.9);
-			float mappedBlue = (float)map(posZ, 0, 255, 0.0, 0.8);
-			float mappedGreen = (float)map(255 - (double)posX, 255, 0, 1, 0.1);
+			float mappedBlue = (float)map(255 - (double)posX, 255, 0, 0.9, 0.0);
+			float mappedGreen = (float)map(posX, 0, 255, 0, 1.0);
 			color = XMFLOAT4(mappedRed, mappedBlue, mappedGreen, 1.0f);
 			
 			vertices[index].position = XMFLOAT3(posX, 0.0f, posZ);

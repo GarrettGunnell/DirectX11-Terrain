@@ -8,5 +8,5 @@
 *.ppm
 *.png
 *.tga
-*.txt
+shader-error.txt
 Debug/
