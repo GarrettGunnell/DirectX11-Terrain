@@ -1,0 +1,4 @@
+Terrain Filename: C:/Users/Fatal/Documents/Visual Studio 2019/Projects/DX11_Terrain/src/Assets/heightmap3.bmp
+Terrain Height: 257
+Terrain Width: 257
+Terrain Scaling: 12.0

@@ -23,4 +23,5 @@ private:
 	Camera* camera;
 	Position* position;
 	Terrain* terrain;
+	bool wireFrame;
 };

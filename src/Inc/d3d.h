@@ -24,6 +24,8 @@ public:
 	void GetProjectionMatrix(XMMATRIX&);
 	void GetWorldMatrix(XMMATRIX&);
 	void GetOrthoMatrix(XMMATRIX&);
+	void EnableWireframe();
+	void DisableWireframe();
 
 	void GetVideoCardInfo(char*, int&);
 
@@ -46,6 +48,7 @@ private:
 	ID3D11Texture2D* depthStencilBuffer;
 	ID3D11DepthStencilState* depthStencilState;
 	ID3D11DepthStencilView* depthStencilView;
+	ID3D11RasterizerState* rasterStateWireframe;
 	ID3D11RasterizerState* rasterState;
 	XMMATRIX projectionMatrix;
 	XMMATRIX worldMatrix;

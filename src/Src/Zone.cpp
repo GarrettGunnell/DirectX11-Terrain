@@ -4,6 +4,7 @@ Zone::Zone() {
 	camera = nullptr;
 	position = nullptr;
 	terrain = nullptr;
+	wireFrame = true;
 }
 
 bool Zone::Initialize(D3D* direct3D, HWND hwnd, int screenWidth, int screenHeight, float screenDepth) {
@@ -20,18 +21,20 @@ bool Zone::Initialize(D3D* direct3D, HWND hwnd, int screenWidth, int screenHeigh
 	if (!position)
 		return false;
 
-	position->SetPosition(128.0f, 5.0f, -10.0f);
+	position->SetPosition(128.0f, 10.0f, -10.0f);
 	position->SetRotation(0.0f, 0.0f, 0.0f);
 
 	terrain = new Terrain();
 	if (!terrain)
 		return false;
 
-	result = terrain->Initialize(direct3D->GetDevice());
+	result = terrain->Initialize(direct3D->GetDevice(), "C:/Users/Fatal/Documents/Visual Studio 2019/Projects/DX11_Terrain/src/Assets/setup.txt");
 	if (!result) {
 		MessageBox(hwnd, L"Could not initialize the terrain", L"Error", MB_OK);
 		return false;
 	}
+
+	wireFrame = true;
 
 	return true;
 }
@@ -106,6 +109,11 @@ void Zone::HandleMovementInput(Input* input, float frameTime) {
 	keyDown = input->IsKeyPressed(DIK_F);
 	position->LookDownward(keyDown);
 
+	keyDown = input->IsKeyPressed(DIK_F1);
+	if (keyDown) {
+		wireFrame = !wireFrame;
+	}
+
 	position->GetPosition(posX, posY, posZ);
 	position->GetRotation(rotX, rotY, rotZ);
 
@@ -126,10 +134,18 @@ bool Zone::Render(D3D* direct3D, ShaderManager* shaderManager) {
 
 	direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
+	if (wireFrame) {
+		direct3D->EnableWireframe();
+	}
+
 	terrain->Render(direct3D->GetDeviceContext());
 	result = shaderManager->RenderColorShader(direct3D->GetDeviceContext(), terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	if (!result)
 		return false;
+
+	if (wireFrame) {
+		direct3D->DisableWireframe();
+	}
 
 	direct3D->EndScene();
 

@@ -10,6 +10,7 @@ D3D::D3D() {
 	depthStencilState = 0;
 	depthStencilView = 0;
 	rasterState = 0;
+	rasterStateWireframe = 0;
 }
 
 bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen, float screenDepth, float screenNear) {
@@ -259,6 +260,23 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	if(FAILED(result))
 		return false;
 
+	// Setup the raster description which will determine how and what polygons will be drawn.
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.DepthClipEnable = true;
+	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.MultisampleEnable = true;
+	rasterDesc.ScissorEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+	// Create the rasterizer state from the description we just filled out.
+	result = device->CreateRasterizerState(&rasterDesc, &rasterStateWireframe);
+	if (FAILED(result))
+		return false;
+
 	// Now set the rasterizer state.
 	deviceContext->RSSetState(rasterState);
 	
@@ -299,6 +317,11 @@ void D3D::Shutdown() {
 	if(rasterState) {
 		rasterState->Release();
 		rasterState = nullptr;
+	}
+
+	if (rasterStateWireframe) {
+		rasterStateWireframe->Release();
+		rasterStateWireframe = nullptr;
 	}
 
 	if(depthStencilView) {
@@ -394,4 +417,12 @@ void D3D::GetOrthoMatrix(XMMATRIX& orthoM) {
 
 void D3D::GetVideoCardInfo(char* cardName, int& memory) {
 	memory = videoCardMemory;
+}
+
+void D3D::EnableWireframe() {
+	deviceContext->RSSetState(rasterStateWireframe);
+}
+
+void D3D::DisableWireframe() {
+	deviceContext->RSSetState(rasterState);
 }
