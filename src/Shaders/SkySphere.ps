@@ -1,0 +1,23 @@
+cbuffer ColorBuffer {
+    float4 apexColor;
+    float4 centerColor;
+};
+
+struct PixelInput {
+    float4 position : SV_POSITION;
+    float4 spherePosition : TEXCOORD0;
+};
+
+float4 SkySpherePixelShader(PixelInput input) : SV_TARGET {
+    float height;
+    float4 outputColor;
+
+    height = input.spherePosition.y;
+    if (height < 0.0) {
+        height = 0.0f;
+    }
+
+    outputColor = lerp(centerColor, apexColor, height);
+    
+    return outputColor;
+}
