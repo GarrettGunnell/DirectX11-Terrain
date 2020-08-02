@@ -35,14 +35,18 @@ bool SkySphereShader::InitializeShader(ID3D11Device* device, HWND hwnd, const WC
 			OutputShaderErrorMessage(errorMessage, hwnd, vsFilename);
 		else 
 			MessageBox(hwnd, vsFilename, L"Missing Shader File", MB_OK);
+
+		return false;
 	}
 
-	result = D3DCompileFromFile(psFilename, NULL, NULL, "SkySpherePixelShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMessage);
+	result = D3DCompileFromFile(psFilename, NULL, NULL, "SkySpherePixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMessage);
 	if (FAILED(result)) {
 		if (errorMessage)
 			OutputShaderErrorMessage(errorMessage, hwnd, psFilename);
 		else
 			MessageBox(hwnd, psFilename, L"Missing Shader File", MB_OK);
+
+		return false;
 	}
 
 	result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);

@@ -4,7 +4,7 @@ cbuffer MatrixBuffer {
     matrix projectionMatrix;
 };
 
-struct vertexInput {
+struct VertexInput {
     float4 position : POSITION;
 };
 
@@ -22,7 +22,7 @@ PixelInput SkySphereVertexShader(VertexInput input) {
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
 
-    output.domePosition = input.position;
+    output.spherePosition = input.position;
 
     return output;
 }
