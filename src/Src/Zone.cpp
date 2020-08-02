@@ -4,6 +4,7 @@ Zone::Zone() {
 	camera = nullptr;
 	position = nullptr;
 	terrain = nullptr;
+	skySphere = nullptr;
 	wireFrame = true;
 }
 
@@ -23,6 +24,16 @@ bool Zone::Initialize(D3D* direct3D, HWND hwnd, int screenWidth, int screenHeigh
 
 	position->SetPosition(128.0f, 10.0f, -10.0f);
 	position->SetRotation(0.0f, 0.0f, 0.0f);
+
+	skySphere = new SkySphere();
+	if (!skySphere)
+		return false;
+
+	result = skySphere->Initialize(direct3D->GetDevice());
+	if (!result) {
+		MessageBox(hwnd, L"Could not initialize sky sphere", L"Error", MB_OK);
+		return false;
+	}
 
 	terrain = new Terrain();
 	if (!terrain)
@@ -44,6 +55,12 @@ void Zone::Shutdown() {
 		terrain->Shutdown();
 		delete terrain;
 		terrain = nullptr;
+	}
+
+	if (skySphere) {
+		skySphere->Shutdown();
+		delete skySphere;
+		skySphere = nullptr;
 	}
 
 	if (position) {
@@ -124,6 +141,7 @@ void Zone::HandleMovementInput(Input* input, float frameTime) {
 bool Zone::Render(D3D* direct3D, ShaderManager* shaderManager) {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
 	bool result;
+	XMFLOAT3 cameraPosition;
 
 	camera->Render();
 
@@ -132,7 +150,28 @@ bool Zone::Render(D3D* direct3D, ShaderManager* shaderManager) {
 	direct3D->GetProjectionMatrix(projectionMatrix);
 	direct3D->GetOrthoMatrix(orthoMatrix);
 
+	cameraPosition = camera->GetPosition();
+
 	direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+	/* Sky Sphere */
+	direct3D->TurnOffCulling();
+	direct3D->TurnZBufferOff();
+
+	worldMatrix = XMMatrixTranslation(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	
+	skySphere->Render(direct3D->GetDeviceContext());
+	result = shaderManager->RenderSkySphereShader(direct3D->GetDeviceContext(), skySphere->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		skySphere->GetApexColor(), skySphere->GetCenterColor());
+	if (!result)
+		return false;
+
+	/* Terrain */
+
+	direct3D->GetWorldMatrix(worldMatrix);
+
+	direct3D->TurnZBufferOn();
+	direct3D->TurnOnCulling();
 
 	if (wireFrame) {
 		direct3D->EnableWireframe();

@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Position.h"
 #include "Terrain.h"
+#include "SkySphere.h"
 
 class Zone {
 public:
@@ -23,5 +24,6 @@ private:
 	Camera* camera;
 	Position* position;
 	Terrain* terrain;
+	SkySphere* skySphere;
 	bool wireFrame;
 };
