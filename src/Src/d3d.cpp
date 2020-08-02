@@ -8,8 +8,10 @@ D3D::D3D() {
 	renderTargetView = 0;
 	depthStencilBuffer = 0;
 	depthStencilState = 0;
+	depthDisabledStencilState = 0;
 	depthStencilView = 0;
 	rasterState = 0;
+	rasterStateNoCulling = 0;
 	rasterStateWireframe = 0;
 }
 
@@ -29,6 +31,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+	D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
 	D3D11_RASTERIZER_DESC rasterDesc;
 	D3D11_VIEWPORT viewport;
 	float fieldOfView, screenAspect;
@@ -260,6 +263,12 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	if(FAILED(result))
 		return false;
 
+	rasterDesc.CullMode = D3D11_CULL_NONE;
+
+	result = device->CreateRasterizerState(&rasterDesc, &rasterStateNoCulling);
+	if (FAILED(result))
+		return false;
+
 	// Setup the raster description which will determine how and what polygons will be drawn.
 	rasterDesc.AntialiasedLineEnable = false;
 	rasterDesc.CullMode = D3D11_CULL_BACK;
@@ -304,19 +313,43 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	// Create an orthographic projection matrix for 2D rendering.
 	orthoMatrix = XMMatrixOrthographicLH((float)screenWidth, (float)screenHeight, screenNear, screenDepth);
 
+	depthDisabledStencilDesc.DepthEnable = false;
+	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthDisabledStencilDesc.StencilEnable = true;
+	depthDisabledStencilDesc.StencilReadMask = 0xFF;
+	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	result = device->CreateDepthStencilState(&depthDisabledStencilDesc, &depthDisabledStencilState);
+	if (FAILED(result))
+		return false;
+
     return true;
 }
 
 
 void D3D::Shutdown() {
 	// Before shutting down set to windowed mode or when you release the swap chain it will throw an exception.
-	if(swapChain) {
+	if (swapChain) {
 		swapChain->SetFullscreenState(false, NULL);
 	}
 
-	if(rasterState) {
+	if (rasterState) {
 		rasterState->Release();
 		rasterState = nullptr;
+	}
+
+	if (rasterStateNoCulling) {
+		rasterStateNoCulling->Release();
+		rasterStateNoCulling = nullptr;
 	}
 
 	if (rasterStateWireframe) {
@@ -324,37 +357,42 @@ void D3D::Shutdown() {
 		rasterStateWireframe = nullptr;
 	}
 
-	if(depthStencilView) {
+	if (depthStencilView) {
 		depthStencilView->Release();
 		depthStencilView = nullptr;
 	}
 
-	if(depthStencilState) {
+	if (depthStencilState) {
 		depthStencilState->Release();
 		depthStencilState = nullptr;
 	}
 
-	if(depthStencilBuffer) {
+	if (depthDisabledStencilState) {
+		depthDisabledStencilState->Release();
+		depthDisabledStencilState = nullptr;
+	}
+
+	if (depthStencilBuffer) {
 		depthStencilBuffer->Release();
 		depthStencilBuffer = nullptr;
 	}
 
-	if(renderTargetView) {
+	if (renderTargetView) {
 		renderTargetView->Release();
 		renderTargetView = nullptr;
 	}
 
-	if(deviceContext) {
+	if (deviceContext) {
 		deviceContext->Release();
 		deviceContext = nullptr;
 	}
 
-	if(device) {
+	if (device) {
 		device->Release();
 		device = nullptr;
 	}
 
-	if(swapChain) {
+	if (swapChain) {
 		swapChain->Release();
 		swapChain = nullptr;
 	}
@@ -425,4 +463,20 @@ void D3D::EnableWireframe() {
 
 void D3D::DisableWireframe() {
 	deviceContext->RSSetState(rasterState);
+}
+
+void D3D::TurnZBufferOn() {
+	deviceContext->OMSetDepthStencilState(depthStencilState, 1);
+}
+
+void D3D::TurnZBufferOff() {
+	deviceContext->OMSetDepthStencilState(depthDisabledStencilState, 1);
+}
+
+void D3D::TurnOnCulling() {
+	deviceContext->RSSetState(rasterState);
+}
+
+void D3D::TurnOffCulling() {
+	deviceContext->RSSetState(rasterStateNoCulling);
 }

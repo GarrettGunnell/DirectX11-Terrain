@@ -24,6 +24,13 @@ public:
 	void GetProjectionMatrix(XMMATRIX&);
 	void GetWorldMatrix(XMMATRIX&);
 	void GetOrthoMatrix(XMMATRIX&);
+
+	void TurnZBufferOn();
+	void TurnZBufferOff();
+
+	void TurnOnCulling();
+	void TurnOffCulling();
+
 	void EnableWireframe();
 	void DisableWireframe();
 
@@ -47,7 +54,9 @@ private:
 	ID3D11RenderTargetView* renderTargetView;
 	ID3D11Texture2D* depthStencilBuffer;
 	ID3D11DepthStencilState* depthStencilState;
+	ID3D11DepthStencilState* depthDisabledStencilState;
 	ID3D11DepthStencilView* depthStencilView;
+	ID3D11RasterizerState* rasterStateNoCulling;
 	ID3D11RasterizerState* rasterStateWireframe;
 	ID3D11RasterizerState* rasterState;
 	XMMATRIX projectionMatrix;

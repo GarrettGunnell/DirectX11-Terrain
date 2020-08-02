@@ -112,7 +112,7 @@ bool SkySphere::InitializeBuffers(ID3D11Device* device) {
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	result = device->CreateBuffer(*indexBufferDesc, &indexData, &indexBuffer);
+	result = device->CreateBuffer(&indexBufferDesc, &indexData, &indexBuffer);
 	if (FAILED(result))
 		return false;
 
