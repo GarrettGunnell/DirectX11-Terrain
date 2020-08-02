@@ -24,7 +24,7 @@ private:
 	ID3D11Buffer* vertexBuffer, *indexBuffer;
 	XMFLOAT4 apexColor, centerColor;
 
-	bool LoadSkySphereModel(char*);
+	bool LoadSkySphereModel(const char*);
 	void ReleaseSkySphereModel();
 
 	bool InitializeBuffers(ID3D11Device*);
