@@ -17,8 +17,8 @@ bool SkySphere::Initialize(ID3D11Device* device) {
 	if (!result)
 		return false;
 
-	apexColor = XMFLOAT4(0.0f, 0.05f, 0.6f, 1.0f);
-	centerColor = XMFLOAT4(0.0f, 0.5f, 0.8f, 1.0f);
+	apexColor = XMFLOAT4(0.2f, 0.01f, 0.0f, 1.0f);
+	centerColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	return true;
 }
